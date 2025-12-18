@@ -1,7 +1,7 @@
 version: '3'
 services:
     php:
-        # image: 'php:7.2-fpm'
+        # Latest stable at last update: 'php:8.5.0-fpm-alpine'
         build:
             context: ./docker
             dockerfile: php.Dockerfile
@@ -12,7 +12,9 @@ services:
             - mariadb
 
     nginx:
-        image: nginx:latest
+        # Latest stable at last update.  You can also use nginx:latest to auto-update,
+        # or nginx:latest-alpine to auto-update with a smaller image size (but no bash).
+        image: nginx:1.29.4-alpine
         container_name: ${APP_NAME:?err}-nginx
         ports:
             - '80:80'
@@ -24,10 +26,11 @@ services:
             - './config/nginx:/etc/nginx/conf.d'
 
     mariadb:
-        image: mariadb:10.3.9
+        # Latest LTS at last update.  You can also use mariadb:lts to auto-update.
+        image: mariadb:11.8.5
         container_name: ${APP_NAME:?err}-mariadb
         restart: 'on-failure'
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?err}
         volumes:
-            - ${PWD}
+            - './mysql:/var/lib/mysql'
